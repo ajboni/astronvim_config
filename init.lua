@@ -143,9 +143,35 @@ local config = {
       defaults = {
         file_ignore_patterns = {
           "node_modules", ".git"
-     	},
+     	  },
       }
     },
+
+    cmp = function(opts)
+      -- opts parameter is the default options table
+      -- the function is lazy loaded so cmp is able to be required
+      local cmp = require "cmp"
+      opts.completion = {
+        keyword_length = 2,
+      }
+      opts.mapping = cmp.mapping.preset.insert({
+        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-e>'] = cmp.mapping.abort(),
+        ['<CR>'] = cmp.mapping.confirm({ select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        ["<PageUp>"] = function(fallback)
+          for i = 1, 5 do
+            cmp.mapping.select_prev_item()(fallback)
+          end
+        end,
+        ["<PageDown>"] = function(fallback)
+          for i = 1, 5 do
+            cmp.mapping.select_next_item()(fallback)
+          end
+        end,
+      })
+      return opts
+    end,
   },
 
   -- LuaSnip Options
